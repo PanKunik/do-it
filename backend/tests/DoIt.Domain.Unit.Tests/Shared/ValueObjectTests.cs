@@ -70,9 +70,25 @@ public class ValueObjectTests
         
         await Task.CompletedTask;
     }
+
+    [Fact]
+    public async Task Equals_WhenOtherHasDifferentType_ShouldReturnFalse()
+    {
+        // Arrange
+        var cut = new FakeName("name");
+        var other = new FakeDescription("name");
+        
+        // Act
+        var result = cut.Equals(other);
+        
+        // Assert
+        Assert.False(result);
+        
+        await Task.CompletedTask;
+    }
     
     [Fact]
-    public async Task EqualOperator_WhenOtherIsNull_ShouldReturnFalse()
+    public async Task OperatorEquals_WhenOtherIsNull_ShouldReturnFalse()
     {
         // Arrange
         var cut = new FakeName("name");
@@ -89,7 +105,7 @@ public class ValueObjectTests
     [Theory]
     [InlineData("first-name")]
     [InlineData("third-name")]
-    public async Task EqualOperator_WhenOtherHasDifferentValue_ShouldReturnFalse(string value)
+    public async Task OperatorEquals_WhenOtherHasDifferentValue_ShouldReturnFalse(string value)
     {
         // Arrange
         var cut = new FakeName("name");
@@ -107,7 +123,7 @@ public class ValueObjectTests
     [Theory]
     [InlineData("first-name", "first-name")]
     [InlineData("second-name", "second-name")]
-    public async Task EqualOperator_WhenOtherHasSameValue_ShouldReturnTrue(string value, string otherValue)
+    public async Task OperatorEquals_WhenOtherHasSameValue_ShouldReturnTrue(string value, string otherValue)
     {
         // Arrange
         var cut =  new FakeName(value);
@@ -123,7 +139,7 @@ public class ValueObjectTests
     }
     
     [Fact]
-    public async Task EqualOperator_WhenOtherHasSameReference_ShouldReturnTrue()
+    public async Task OperatorEquals_WhenOtherHasSameReference_ShouldReturnTrue()
     {
         // Arrange
         var cut = new FakeName("name");
@@ -137,9 +153,25 @@ public class ValueObjectTests
         
         await Task.CompletedTask;
     }
+
+    [Fact]
+    public async Task OperatorEquals_WhenOtherHasDifferentType_ShouldReturnFalse()
+    {
+        // Arrange
+        var cut = new FakeName("name");
+        var other = new FakeDescription("name");
+        
+        // Act
+        var result = cut == other;
+        
+        // Assert
+        Assert.False(result);
+        
+        await Task.CompletedTask;
+    }
     
     [Fact]
-    public async Task NotEqualOperator_WhenOtherIsNull_ShouldReturnTrue()
+    public async Task OperatorNotEquals_WhenOtherIsNull_ShouldReturnTrue()
     {
         // Arrange
         var cut = new FakeName("name");
@@ -156,7 +188,7 @@ public class ValueObjectTests
     [Theory]
     [InlineData("first-name", "first-name")]
     [InlineData("second-name", "second-name")]
-    public async Task NotEqualOperator_WhenOtherHasSameValue_ShouldReturnFalse(string value, string otherValue)
+    public async Task OperatorNotEquals_WhenOtherHasSameValue_ShouldReturnFalse(string value, string otherValue)
     {
         // Arrange
         var cut =  new FakeName(value);
@@ -174,7 +206,7 @@ public class ValueObjectTests
     [Theory]
     [InlineData("first-name")]
     [InlineData("third-name")]
-    public async Task NotEqualOperator_WhenOtherHasDifferentValue_ShouldReturnTrue(string value)
+    public async Task OperatorNotEquals_WhenOtherHasDifferentValue_ShouldReturnTrue(string value)
     {
         // Arrange
         var cut = new FakeName("name");
@@ -190,7 +222,7 @@ public class ValueObjectTests
     }
     
     [Fact]
-    public async Task NotEqualOperator_WhenOtherHasSameReference_ShouldReturnFalse()
+    public async Task OperatorNotEquals_WhenOtherHasSameReference_ShouldReturnFalse()
     {
         // Arrange
         var cut = new FakeName("name");
@@ -204,23 +236,76 @@ public class ValueObjectTests
         
         await Task.CompletedTask;
     }
+
+    [Fact]
+    public async Task OperatorNotEquals_WhenOtherHasDifferentType_ShouldReturnTrue()
+    {
+        // Arrange
+        var cut = new FakeName("name");
+        var other = new FakeDescription("name");
+        
+        // Act
+        var result = cut != other;
+        
+        // Assert
+        Assert.True(result);
+        
+        await Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task GetHashCode_WhenOtherIsTheSame_ShouldBeEqual()
+    {
+        // Arrange
+        var cut = new FakeName("name");
+        var other = new FakeName("name");
+        
+        // Act
+        var cutHashCode =  cut.GetHashCode();
+        var otherHashCode =  other.GetHashCode();
+        
+        // Assert
+        Assert.Equal(cutHashCode, otherHashCode);
+        
+        await Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task GetHashCode_WhenOtherIsTheSame_ShouldBeNotEqual()
+    {
+        // Arrange
+        var cut = new FakeName("name1");
+        var other = new FakeName("name2");
+        
+        // Act
+        var cutHashCode =  cut.GetHashCode();
+        var otherHashCode =  other.GetHashCode();
+        
+        // Assert
+        Assert.NotEqual(cutHashCode, otherHashCode);
+        
+        await Task.CompletedTask;
+    }
     
-    private sealed class FakeName
+    private sealed class FakeName(string name)
         : ValueObject
     {
-        public string Name { get; }
-
-        public FakeName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Value cannot be empty", nameof(name));
-        
-            Name = name;
-        }
+        public string Name { get; } = name;
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Name;
+        }
+    }
+
+    private sealed class FakeDescription(string description)
+        : ValueObject
+    {
+        public string Description { get; } = description;
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Description;
         }
     }
 }

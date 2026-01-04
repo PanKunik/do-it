@@ -1,59 +1,41 @@
 namespace DoIt.Domain.Shared;
 
 public abstract class ValueObject
+    : IEquatable<ValueObject>
 {
     protected abstract IEnumerable<object> GetEqualityComponents();
 
-    public override bool Equals(object? obj)
+    public bool Equals(ValueObject? other)
     {
-        if (obj is null || obj.GetType() != GetType())
+        if (other is null)
             return false;
 
-        var other = (ValueObject)obj;
-
+        if (ReferenceEquals(this, other))
+            return true;
+        
+        if (other.GetType() != GetType())
+            return false;
+        
         return GetEqualityComponents()
             .SequenceEqual(other.GetEqualityComponents());
     }
+    
+    public override bool Equals(object? obj)
+        => Equals(obj as ValueObject);
 
     public override int GetHashCode()
     {
-        return GetEqualityComponents()
-            .Select(x => x.GetHashCode())
-            .Aggregate((x, y) => x ^ y);
-    }
+        var hash = new HashCode();
 
-    public static bool operator ==(
-        ValueObject one,
-        ValueObject two
-    )
-    {
-        return EqualOperator(one, two);
-    }
-
-    public static bool operator !=(
-        ValueObject one,
-        ValueObject two
-    )
-    {
-        return NotEqualOperator(one, two);
-    }
-    
-    private static bool EqualOperator(
-        ValueObject left,
-        ValueObject right
-    )
-    {
-        if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
-            return false;
+        foreach (var component in GetEqualityComponents())
+            hash.Add(component);
         
-        return ReferenceEquals(left, right) || left!.Equals(right);
+        return hash.ToHashCode();
     }
 
-    private static bool NotEqualOperator(
-        ValueObject left,
-        ValueObject right
-    )
-    {
-        return !EqualOperator(left, right);
-    }
+    public static bool operator ==(ValueObject? one, ValueObject? two)
+        => Equals(one, two);
+
+    public static bool operator !=(ValueObject? one, ValueObject? two)
+        => !Equals(one, two);
 }
