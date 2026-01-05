@@ -5,10 +5,61 @@ namespace DoIt.Domain.Unit.Tests.Shared;
 public class EntityTests
 {
     [Fact]
+    public async Task GetHashCode_WhenOtherHasSameIdAndType_ShouldBeEqual()
+    {
+        // Arrange
+        FakeEntity cut = new(new(1), new("test"));
+        FakeEntity other = new(new(1), new("test2"));
+
+        // Act
+        var cutHashCode = cut.GetHashCode();
+        var otherHashCode = other.GetHashCode();
+
+        // Assert
+        Assert.Equal(cutHashCode, otherHashCode);
+
+        await Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task GetHashCode_WhenOtherHasDifferentIdValue_ShouldNotBeEqual()
+    {
+        // Arrange
+        FakeEntity cut = new(new(1), new("test"));
+        FakeEntity other = new(new(2), new("test2"));
+
+        // Act
+        var cutHashCode = cut.GetHashCode();
+        var otherHashCode = other.GetHashCode();
+
+        // Assert
+        Assert.NotEqual(cutHashCode, otherHashCode);
+
+        await Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task GetHashCode_WhenOtherHasDifferentIdTypeButSameValues_ShouldNotBeEqual()
+    {
+        // Arrange
+        FakeEntity cut = new(new(1), new("test"));
+        OtherEntity other = new(new(1), new("test"));
+
+        // Act
+        var cutHashCode = cut.GetHashCode();
+        var otherHashCode = other.GetHashCode();
+
+        // Assert
+        Assert.NotEqual(cutHashCode, otherHashCode);
+
+        await Task.CompletedTask;
+    }
+
+    [Fact]
     public async Task Entity_WhenIdIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        FakeEntity CreateEntity() => new(null, new("fake-name"));
+        FakeEntity CreateEntity() => new(null!, new("fake-name"));
 
         // Act && Assert
         Assert.Throws<ArgumentNullException>((Func<FakeEntity>)CreateEntity);
@@ -120,7 +171,7 @@ public class EntityTests
         FakeEntity? entity = null;
         
         // Act
-        var result = fakeEntity == null;
+        var result = fakeEntity == entity;
         
         // Assert
         Assert.False(result);
@@ -184,7 +235,7 @@ public class EntityTests
         FakeEntity? entity = null;
         
         // Act
-        var result = fakeEntity != null;
+        var result = fakeEntity != entity;
         
         // Assert
         Assert.True(result);
