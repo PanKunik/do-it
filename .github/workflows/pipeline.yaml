@@ -22,7 +22,15 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
+
+      - name: Configure NuGet to use GitHub Packages
+        run: |
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --name "github" \
+            --username "${{ github.repository_owner }}" \
+            --password "${{ secrets.GHCR_PAT_READONLY }}" \
+            --store-password-in-clear-text
 
       - name: Cache NuGet packages
         uses: actions/cache@v3
@@ -54,7 +62,7 @@ jobs:
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -76,7 +84,7 @@ jobs:
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -85,7 +93,7 @@ jobs:
           path: ./
 
       - name: Run domain unit tests
-        run: dotnet test backend/tests//DoIt.Api.Integration.Tests --no-build --no-restore --configuration Release
+        run: dotnet test backend/tests/DoIt.Api.Integration.Tests --no-build --no-restore --configuration Release
 
   build-and-push-docker:
     runs-on: ubuntu-latest
@@ -106,11 +114,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build Docker image
-        run: |
-          REPO=$(echo "${{github.actor}}" | tr '[:upper:]' '[:lower:]')
-          docker build -t ghcr.io/$REPO/doit-api:latest -f backend/src/DoIt.Api/Dockerfile ./backend
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -118,7 +121,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
-      - name: Push Docker image to GHCR
+      - name: Build Docker image
+        env:
+          GH_PACKAGES_TOKEN: ${{ secrets.GHCR_PAT }}
         run: |
           REPO=$(echo "${{github.actor}}" | tr '[:upper:]' '[:lower:]')
-          docker push ghcr.io/$REPO/doit-api:latest
+
+          docker buildx build \
+            --secret id=gh_packages_token,env=GH_PACKAGES_TOKEN \
+            -t ghcr.io/$REPO/doit-api:latest \
+            -f backend/src/DoIt.Api/Dockerfile \
+            --push \
+            ./backend

@@ -3,6 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+## Own NuGet config
+backend/nuget.config
+
+## GitHub's access token for Github Packages access
+**/.gh_access_token
+
 # User-specific files
 *.rsuser
 *.suo
