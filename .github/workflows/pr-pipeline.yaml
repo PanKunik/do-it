@@ -1,9 +1,6 @@
-name: Build, test and publish Docker Image to GHCR
+name: Build, test and build Docker Image
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -95,7 +92,7 @@ jobs:
       - name: Run domain unit tests
         run: dotnet test backend/tests/DoIt.Api.Integration.Tests --no-build --no-restore --configuration Release
 
-  build-and-push-docker:
+  build-docker:
     runs-on: ubuntu-latest
     needs: [ unit-tests, integration-tests ]
 
@@ -114,13 +111,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
-
       - name: Build Docker image
         env:
           GH_PACKAGES_TOKEN: ${{ secrets.GHCR_PAT }}
@@ -129,7 +119,6 @@ jobs:
 
           docker buildx build \
             --secret id=gh_packages_token,env=GH_PACKAGES_TOKEN \
-            -t ghcr.io/$REPO/doit-api:latest \
+            -t ghcr.io/$REPO/doit-api:test-latest \
             -f backend/src/DoIt.Api/Dockerfile \
-            --push \
             ./backend
