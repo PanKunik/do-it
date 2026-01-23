@@ -1,0 +1,11 @@
+
+<h3>Activities:</h3>
+
+<div class="col-6">
+    <ul>
+        @for (item of activities; track $index) {
+            <app-activity-item [activity]="item"></app-activity-item>
+            <hr />
+        }
+    </ul>
+</div>
