@@ -1,0 +1,8 @@
+services:
+  frontend:
+      build:
+        context: ./frontend
+        dockerfile: ../docker/frontend.Dockerfile
+      container_name: do-it-frontend
+      ports:
+        - "8080:80"
