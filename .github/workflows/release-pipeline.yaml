@@ -131,6 +131,6 @@ jobs:
             --secret id=gh_packages_token,env=GH_PACKAGES_TOKEN \
             -t ghcr.io/$REPO/doit-api:${{ steps.version.outputs.version }} \
             -t ghcr.io/$REPO/doit-api:latest \
-            -f backend/src/DoIt.Api/Dockerfile \
+            -f docker/backend.Dockerfile \
             --push \
             ./backend

@@ -7,7 +7,9 @@
 backend/nuget.config
 
 ## GitHub's access token for Github Packages access
-**/.gh_access_token
+.gh_packages_token
+
+**/.idea
 
 # User-specific files
 *.rsuser
