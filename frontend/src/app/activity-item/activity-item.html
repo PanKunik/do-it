@@ -1,0 +1,11 @@
+@if (activity == null)
+{
+    <p>Something went wrong.</p>
+} @else {
+    <p>Activity - {{ activity.Name }}</p>
+    @if (activity.Description != null)
+    {
+        <p><strong>Description</strong></p>
+        <span>{{activity!.Description}}</span>
+    }
+}
