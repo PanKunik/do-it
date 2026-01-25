@@ -3,6 +3,10 @@
   <ItemGroup>
     <ProjectReference Include="..\DoIt.Domain\DoIt.Domain.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="PanKunik.Results.Rop" Version="0.1.0" />
+  </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>

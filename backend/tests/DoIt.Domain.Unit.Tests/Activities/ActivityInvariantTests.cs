@@ -16,10 +16,12 @@ public class ActivityInvariantTests
     public void Aggregate_ShouldNeverHaveNullImportance()
     {
         // Act
-        var activity = Activity.Create(
+        var activityResult = Activity.Create(
             ActivityTestData.ValidTitle(),
             importance: null
         );
+        
+        var activity = activityResult.Value!;
         
         // Assert
         Assert.NotNull(activity.Importance);
@@ -29,10 +31,12 @@ public class ActivityInvariantTests
     public void Aggregate_ShouldNeverHaveNullStatus()
     {
         // Act
-        var activity = Activity.Create(
+        var activityResult = Activity.Create(
             ActivityTestData.ValidTitle(),
             status: null
         );
+        
+        var activity = activityResult.Value!;
         
         // Assert
         Assert.NotNull(activity.Status);
