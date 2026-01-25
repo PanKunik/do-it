@@ -12,14 +12,14 @@ public sealed class Description
 
     private Description(string? value) => Value = value;
     
-    public static Result<Description?> Create(string? value)
+    public static Result<Description> Create(string? value)
     {
         var trimmedValue = value?.Trim();
         
         if (trimmedValue?.Length > MaximumDescriptionLength)
-            return Result<Description?>.Failure(Errors.Descriptions.TooLong(MaximumDescriptionLength));
+            return Result<Description>.Failure(Errors.Descriptions.TooLong(MaximumDescriptionLength));
 
-        return Result<Description?>.Success(new Description(trimmedValue));
+        return Result<Description>.Success(new Description(trimmedValue));
     }
     
     protected override IEnumerable<object> GetEqualityComponents()

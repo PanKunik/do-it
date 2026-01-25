@@ -1,5 +1,6 @@
 ﻿using DoIt.Domain.Activities.ValueObjects;
 using PanKunik.CleanArchitecture.BuildingBlocks;
+using PanKunik.Results;
 
 namespace DoIt.Domain.Activities;
 
@@ -21,19 +22,21 @@ public class Activity
         Status = status ?? throw new ArgumentNullException(nameof(status));
     }
 
-    public static Activity Create(
+    public static Result<Activity> Create(
         Title title,
         Description? description = null,
         Importance? importance = null,
         Status? status = null
     )
     {
-        return new Activity(
-            ActivityId.New(),
-            title,
-            description,
-            importance ?? Importance.NotImportant,
-            status ?? Status.NotDone
+        return Result<Activity>.Success(
+            new Activity(
+                ActivityId.New(),
+                title,
+                description,
+                importance ?? Importance.NotImportant,
+                status ?? Status.NotDone
+            )
         );
     }
 
@@ -45,7 +48,7 @@ public class Activity
     public void Rename(Title title)
     {
         ArgumentNullException.ThrowIfNull(title);
-        
+
         if (Title == title)
             return;
 

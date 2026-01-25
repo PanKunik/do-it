@@ -35,7 +35,7 @@ internal sealed class ActivityBuilder
 
     public ActivityBuilder WithoutImportance()
     {
-        _importance = null;
+        _importance = null!;
         return this;
     }
 
@@ -47,7 +47,7 @@ internal sealed class ActivityBuilder
 
     public ActivityBuilder WithoutStatus()
     {
-        _status = null;
+        _status = null!;
         return this;
     }
 
@@ -58,6 +58,6 @@ internal sealed class ActivityBuilder
             _description,
             _importance,
             _status
-        );
+        ).Value!;
     }
 }
