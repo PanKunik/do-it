@@ -1,6 +1,12 @@
-@DoIt.Api_HostAddress = http://localhost:5017
+@host = http://localhost:5017/api
 
-GET {{DoIt.Api_HostAddress}}/weatherforecast/
+POST {{ host }}/activity
 Accept: application/json
+Content-Type: application/json
 
+{
+    "Title": null,
+    "Description": null,
+    "IsImportant": true
+}
 ###
